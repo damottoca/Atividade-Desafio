@@ -1,0 +1,33 @@
+fun main() {
+
+print("Digite o primeiro número: ")
+val n1 = readLine()!!.toDouble()
+
+print("Digite o segundo número: ")
+val n2 = readLine()!!.toDouble()
+
+println("Escolha a operação (+, -, *, /): ")
+val op = readLine()
+
+var resultado = 0.0
+
+if (op == "+") {
+    resultado = n1 + n2
+} else if (op == "-") {
+    resultado = n1 - n2
+} else if (op == "*") {
+    resultado = n1 * n2
+} else if (op == "/") {
+    if (n2 != 0.0) {
+        resultado = n1 / n2
+    } else {
+        println("Não pode dividir por zero.")
+        return
+    }
+} else {
+    println("Operação inválida.")
+    return
+}
+
+println("Resultado: $resultado")
+}
