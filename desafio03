@@ -1,0 +1,126 @@
+package org.example
+
+import java.math.BigDecimal
+
+fun main() {
+    val produto = Produto("", BigDecimal.ZERO)
+    val financeiro = Financeiro()
+    val estoque = mutableListOf<Produto>()
+
+    while (true) {
+        menu()
+        val opcao = readln().toInt()
+
+        when (opcao) {
+            1 -> {
+                val compra = Compra(produto)
+                compra.compra(financeiro, estoque)
+            }
+
+            2 -> {
+                val venda = Venda(produto)
+                venda.vender(financeiro, estoque)
+            }
+
+            3 -> {
+                println("Dinheiro atual: R$ ${financeiro.caixa}")
+            }
+
+            4 -> {
+                if (estoque.isEmpty()) {
+                    println("Estoque vazio.")
+                } else {
+                    println("Produtos no estoque:")
+                    estoque.forEach {
+                        println("${it.nome} - R$ ${it.preco}")
+                    }
+                }
+            }
+
+            5 -> {
+                println("Saindo...")
+                break
+            }
+
+            else -> println("Opção inválida.")
+        }
+
+        println()
+    }
+}
+val vitrine : List<Map<String, BigDecimal>> = listOf(
+    mapOf("banana" to BigDecimal( "3.31")),
+    mapOf("uva" to BigDecimal( "6.99")),
+    mapOf("abacate" to BigDecimal( "5.50")),
+    mapOf("abacaxi" to BigDecimal( "10.01")),
+)// uma lista de mapas; cada mapa tem um nome e um preço
+
+
+ fun menu(){
+  println("1-Comprar produto")
+  println("2-Vender produto")
+  println("3-Ver caixa")
+  println("4-Ver estoque")
+  println("5-Sair")
+     println("Escolher:")
+
+ }
+
+class Produto(
+    var nome: String,
+    var preco: BigDecimal
+)
+
+class Estoque(
+    var produto: Produto
+)
+
+class Compra(
+    var produto: Produto
+) {
+    fun compra(financeiro: Financeiro, estoque: MutableList<Produto>) {
+        println("O que você quer comprar?")
+        val nomeDigitado = readln().lowercase()
+
+        val produtoEncontrado = vitrine.find { it.containsKey(nomeDigitado) }
+
+        if (produtoEncontrado != null) {
+            val preco = produtoEncontrado[nomeDigitado]!!
+            produto.nome = nomeDigitado
+            produto.preco = preco
+
+            if (financeiro.caixa >= preco) {
+                estoque.add(Produto(produto.nome, produto.preco))
+                financeiro.caixa -= preco
+                println("Compra realizada com sucesso!")
+            } else {
+                println("Dinheiro insuficiente.")
+            }
+        } else {
+            println("Produto não encontrado na vitrine.")
+        }
+    }
+}
+
+class Venda(
+    var produto: Produto
+) {
+    fun vender(financeiro: Financeiro, estoque: MutableList<Produto>) {
+        println("Qual produto você quer vender?")
+        val nomeDigitado = readln().lowercase()
+
+        val produtoEstoque = estoque.find { it.nome == nomeDigitado }
+
+        if (produtoEstoque != null) {
+            estoque.remove(produtoEstoque)
+            financeiro.caixa += produtoEstoque.preco
+            println("Venda realizada com sucesso!")
+        } else {
+            println("Produto não encontrado no estoque.")
+        }
+    }
+}
+
+class Financeiro(
+    var caixa: BigDecimal = "100.0".toBigDecimal()
+)
